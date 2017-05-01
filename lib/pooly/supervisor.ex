@@ -8,6 +8,7 @@ defmodule Pooly.Supervisor do
 
   def init(pools_config) do
     # Top level supervisor supervises the PoolsSupervisor and Pooly.Server
+    # NOTE: start_link/3 in invoked on the child modules by default
     children = [
       supervisor(Pooly.PoolsSupervisor, []),
       worker(Pooly.Server, [pools_config])

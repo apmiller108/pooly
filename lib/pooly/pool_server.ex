@@ -88,7 +88,7 @@ defmodule Pooly.PoolServer do
     end
   end
 
-  def handle_call(:status, _from, state = %{worker: workers,
+  def handle_call(:status, _from, state = %{workers: workers,
                                             monitors: monitors}) do
 
     {:reply, {length(workers)}, :ets.info(monitors, :size), state}
@@ -119,6 +119,7 @@ defmodule Pooly.PoolServer do
     {:ok, worker_sup} =
       Supervisor.start_child(pool_sup, supervisor_spec(name, mfa))
 
+    # Start workers through the worker superisor
     workers = prepopulate(size, worker_sup)
     {:noreply, %{state | worker_sup: worker_sup, workers: workers}}
   end
@@ -155,6 +156,7 @@ defmodule Pooly.PoolServer do
     end
   end
 
+  # TODO: fix that this function never gets called
   # handle exits from worker supervisor
   def handle_info({:EXIT, worker_sup, reason},
     state = %{worker_sup: worker_sup}) do
